@@ -133,7 +133,11 @@ Planner, dashboard, and history routes require authentication. Requests to the g
 ## Team Members
 
 G Vidya
+
 G Keerthika
+
 G Keerthana
+
 A Vidya Bharathi
+
 B Dhanalakshmi
