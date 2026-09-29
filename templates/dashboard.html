@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PocketSmart AI – Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--navy:#0F2D5A;--navy2:#0A2244;--navy3:#071A35;--blue:#1E6FD9;--blue-lt:#4189E8;--blue-pale:#EEF4FE;--blue-mid:#CCDCFB;--gold:#F5A623;--gold-lt:#FFD07A;--white:#FFFFFF;--off:#F7F9FC;--text:#0A1628;--text2:#1E2E46;--muted:#5C718A;--border:#DDE5F0;--shadow:0 4px 20px rgba(10,34,68,0.08);--shadow2:0 8px 36px rgba(10,34,68,0.14);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--off);min-height:100vh;}
+    a{text-decoration:none;color:inherit;}
+
+    /* NAVBAR */
+    nav{background:var(--navy3);height:60px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+    .nav-logo{font-size:1.15rem;font-weight:800;color:var(--white);}
+    .nav-right{display:flex;align-items:center;}
+    .nl{padding:8px 14px;margin-left:4px;border-radius:8px;font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.78);transition:all .2s;}
+    .nl:hover{color:var(--white);}
+    .nl.active{background:var(--blue);color:var(--white);}
+    .nl.danger{color:rgba(255,255,255,0.6);}
+    .nl.danger:hover{color:var(--white);}
+    .user-chip{display:none;}
+
+    /* BANNER */
+    .banner{background:linear-gradient(150deg,var(--navy3) 0%,var(--navy) 55%,#1A4F9E 100%);padding:40px 44px;position:relative;overflow:hidden;}
+    .banner::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:36px 36px;}
+    .banner-glow{position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(30,111,217,0.4) 0%,transparent 70%);right:-40px;top:-80px;pointer-events:none;}
+    .banner-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;}
+    .banner-text h1{font-size:1.7rem;font-weight:900;color:var(--white);margin-bottom:6px;}
+    .banner-text h1 em{font-style:normal;color:var(--gold-lt);}
+    .banner-text p{color:rgba(255,255,255,0.72);font-size:0.93rem;font-weight:600;}
+    .banner-pill{background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);color:var(--gold-lt);padding:10px 22px;border-radius:50px;font-size:0.85rem;font-weight:800;}
+
+    /* MAIN */
+    main{max-width:1100px;margin:0 auto;padding:32px 44px;}
+
+    /* STATS */
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:30px;}
+    .stat{background:var(--white);border:2px solid var(--border);border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);transition:all .2s;}
+    .stat:hover{transform:translateY(-2px);box-shadow:var(--shadow2);border-color:var(--blue-mid);}
+    .stat-ico{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+    .si-b{background:var(--blue-pale);}
+    .si-g{background:#FFFBEB;}
+    .si-p{background:#F5F3FF;}
+    .stat-val{font-size:1.75rem;font-weight:900;color:var(--navy);}
+    .stat-lbl{font-size:0.8rem;font-weight:700;color:var(--muted);margin-top:2px;}
+
+    /* SECTION HEAD */
+    .sec-head{font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:16px;padding-left:2px;}
+
+    /* PLANNER GRID */
+    .planners{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:30px;}
+    .pc{background:var(--white);border:2px solid var(--border);border-radius:18px;overflow:hidden;display:block;box-shadow:var(--shadow);transition:all .25s;}
+    .pc:hover{transform:translateY(-5px);box-shadow:var(--shadow2);border-color:var(--blue-lt);}
+    .pc-top{height:108px;display:flex;align-items:center;justify-content:center;font-size:2.6rem;}
+    .pt-b, .pt-g, .pt-p{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);}
+    .pc-body{padding:18px 20px;}
+    .pc-body h3{font-size:0.95rem;font-weight:900;color:var(--text);margin-bottom:7px;}
+    .pc-body p{font-size:0.82rem;color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:12px;}
+    .pc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:13px;}
+    .pct{font-size:0.7rem;font-weight:800;padding:3px 9px;border-radius:20px;background:var(--blue-pale);color:var(--blue);border:1.5px solid var(--blue-mid);}
+    .pc-btn{display:block;background:var(--navy);color:var(--white);text-align:center;padding:9px;border-radius:50px;font-weight:800;font-size:0.85rem;transition:background .2s;}
+    .pc-btn:hover{background:var(--navy2);}
+
+    .view-history-wrap{text-align:center;margin:-6px 0 30px;}
+    .btn-view-history{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold) 0%,#E8940F 100%);color:var(--white);padding:12px 28px;border-radius:50px;font-weight:800;font-size:0.9rem;transition:all .2s;}
+    .btn-view-history:hover{transform:translateY(-1px);}
+
+    /* ACTIVITY */
+    .activity{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);}
+    .activity-head{background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%);padding:16px 24px;display:flex;align-items:center;gap:10px;}
+    .activity-head h3{color:var(--white);font-size:1rem;font-weight:800;}
+    .activity-body{padding:8px 24px;}
+    .empty-state{text-align:center;padding:38px 20px;}
+    .empty-ico{font-size:2.5rem;margin-bottom:10px;opacity:0.3;}
+    .empty-txt{color:var(--muted);font-weight:700;font-size:0.9rem;}
+    .act-row{display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid var(--border);}
+    .act-row:last-child{border-bottom:none;}
+    .act-ico{width:40px;height:40px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+    .act-info{flex:1;}
+    .act-name{font-weight:800;font-size:0.9rem;color:var(--navy);margin-bottom:2px;}
+    .act-date{color:var(--muted);font-size:0.78rem;font-weight:600;}
+    .act-amt{font-weight:900;color:var(--navy);font-size:0.9rem;}
+
+    @media(max-width:900px){nav{padding:0 20px;}main{padding:24px 20px;}.banner{padding:30px 20px;}.stats,.planners{grid-template-columns:1fr;}.banner-pill{display:none;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">PocketSmart</div>
+  <div class="nav-right">
+    <a href="/dashboard" class="nl active">Dashboard</a>
+    <a href="/home-planner" class="nl">Home Planner</a>
+    <a href="/party-planner" class="nl">Party Planner</a>
+    <a href="/jewelry-planner" class="nl">Jewelry Planner</a>
+    <a href="/history" class="nl">History</a>
+    <span class="user-chip" id="userChip">👤 User</span>
+    <a href="/logout" class="nl danger">Logout</a>
+  </div>
+</nav>
+
+<div class="banner">
+  <div class="banner-glow"></div>
+  <div class="banner-inner" style="justify-content:center;text-align:center;">
+    <div class="banner-text">
+      <h1>Welcome, <em id="heroUser">there</em>!</h1>
+      <p>Choose a budget planner to get started with your personalized financial planning experience.</p>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="sec-head">Our Smart Budget Planners</div>
+  <div class="planners">
+    <a href="/home-planner" class="pc">
+      <div class="pc-top pt-b">🏠</div>
+      <div class="pc-body">
+        <h3>Home Budget Planner</h3>
+        <p>Plan your interior design budget efficiently with AI-powered recommendations for furniture, lighting, and more.</p>
+        <div class="pc-tags"><span class="pct">Amazon</span><span class="pct">Flipkart</span><span class="pct">IKEA</span></div>
+        <div class="pc-btn">Get Started</div>
+      </div>
+    </a>
+    <a href="/party-planner" class="pc">
+      <div class="pc-top pt-g">🎉</div>
+      <div class="pc-body">
+        <h3>Party Budget Planner</h3>
+        <p>Plan your perfect event with budget allocations for venue, catering, decorations, and entertainment.</p>
+        <div class="pc-tags"><span class="pct">Swiggy</span><span class="pct">Zomato</span><span class="pct">OYO</span></div>
+        <div class="pc-btn">Get Started</div>
+      </div>
+    </a>
+    <a href="/jewelry-planner" class="pc">
+      <div class="pc-top pt-p">💍</div>
+      <div class="pc-body">
+        <h3>Jewelry Budget Planner</h3>
+        <p>Find the ideal jewelry pieces for any occasion that match your outfit and stay within your budget.</p>
+        <div class="pc-tags"><span class="pct">Amazon</span><span class="pct">Flipkart</span><span class="pct">Occasions</span></div>
+        <div class="pc-btn">Get Started</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="view-history-wrap">
+    <a href="/history" class="btn-view-history">&#8635; View All Recommendation History</a>
+  </div>
+
+  <div class="activity" id="actBoxWrap">
+    <div class="activity-head">&#8635;<h3>Recent Activity</h3></div>
+    <div class="activity-body">
+      <div id="actBox">
+        <div class="empty-state"><div class="empty-ico">📭</div><p class="empty-txt">No recommendations yet. Start planning to see your activity here!</p></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const u = localStorage.getItem('username') || 'there';
+  document.getElementById('heroUser').textContent = u;
+  document.getElementById('userChip').textContent = '👤 ' + u;
+  const em = {home:'🏠', party:'🎉', jewelry:'💍'};
+  const lm = {home:'Home Interior', party:'Party Budget', jewelry:'Jewelry'};
+  fetch('/api/history').then(r => r.json()).then(d => {
+    if (d.total > 0) {
+      document.getElementById('actBox').innerHTML = d.history.slice(-5).reverse().map(i => `
+        <div class="act-row">
+          <div class="act-ico">${em[i.category] || '📋'}</div>
+          <div class="act-info"><div class="act-name">${lm[i.category] || i.category} Recommendation</div><div class="act-date">${new Date(i.timestamp).toLocaleString()}</div></div>
+          <div class="act-amt">₹${i.budget?.toLocaleString() || 'N/A'}</div>
+        </div>`).join('');
+    }
+  }).catch(() => {});
+</script>
+</body>
+</html>

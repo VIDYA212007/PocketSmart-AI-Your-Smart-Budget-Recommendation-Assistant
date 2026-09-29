@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PocketSmart AI – Smart Budget Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy:    #0F2D5A;
+      --navy2:   #0A2244;
+      --navy3:   #071A35;
+      --blue:    #1E6FD9;
+      --blue-lt: #4189E8;
+      --blue-pale: #EEF4FE;
+      --blue-mid:  #CCDCFB;
+      --gold:    #F5A623;
+      --gold-lt: #FFD07A;
+      --white:   #FFFFFF;
+      --off:     #F7F9FC;
+      --text:    #0A1628;
+      --text2:   #1E2E46;
+      --muted:   #5C718A;
+      --border:  #DDE5F0;
+      --shadow:  0 4px 24px rgba(10,34,68,0.09);
+      --shadow2: 0 10px 48px rgba(10,34,68,0.16);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Nunito',sans-serif; color:var(--text); background:var(--white); }
+    a { text-decoration:none; color:inherit; }
+
+    /* ── NAVBAR ── */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      height:68px; padding:0 72px;
+      background:var(--navy3);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .nav-logo { font-size:1.3rem; font-weight:800; color:var(--white); letter-spacing:-0.3px; }
+    .nav-menu { display:flex; align-items:center; }
+    .nav-menu a { font-size:0.93rem; font-weight:600; color:rgba(255,255,255,0.85); margin-left:28px; transition:color .2s; }
+    .nav-menu a:hover { color:var(--white); }
+    .nav-btn {
+      background:var(--blue) !important; color:var(--white) !important;
+      padding:9px 22px !important; border-radius:50px !important;
+      font-weight:700 !important; font-size:0.9rem !important;
+      transition:background .2s !important;
+    }
+    .nav-btn:hover { background:var(--blue-lt) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      padding:150px 72px 90px;
+      background:linear-gradient(155deg, var(--navy3) 0%, var(--navy) 55%, #1A4F9E 100%);
+      text-align:center;
+    }
+    .hero-inner { max-width:760px; margin:0 auto; }
+    .hero h1 {
+      font-size:clamp(1.9rem,3.6vw,2.7rem); font-weight:800; color:var(--white);
+      line-height:1.22; margin-bottom:20px; letter-spacing:-0.3px;
+    }
+    .hero-sub {
+      font-size:1.05rem; font-weight:500; color:rgba(255,255,255,0.82);
+      line-height:1.7; max-width:620px; margin:0 auto 36px;
+    }
+    .hero-actions { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+    .btn-gold {
+      background:var(--blue); color:var(--white); padding:13px 30px;
+      border-radius:50px; font-weight:700; font-size:0.97rem; transition:all .2s;
+    }
+    .btn-gold:hover { background:var(--blue-lt); }
+    .btn-ghost-w {
+      background:var(--white); color:var(--navy); padding:13px 30px;
+      border-radius:50px; font-weight:700; font-size:0.97rem; transition:all .2s;
+    }
+    .btn-ghost-w:hover { background:var(--blue-pale); }
+
+    /* ── SECTIONS ── */
+    .section { padding:88px 72px; max-width:1200px; margin:0 auto; }
+    .section-alt { background:var(--off); }
+    .section-alt-inner { max-width:1200px; margin:0 auto; padding:88px 72px; }
+    .sec-title { font-size:clamp(1.55rem,2.5vw,2.1rem); font-weight:800; color:var(--navy); margin-bottom:14px; letter-spacing:-0.2px; position:relative; display:inline-block; }
+    .sec-title::after { content:''; display:block; width:56px; height:3px; background:var(--gold); margin:10px auto 0; border-radius:2px; }
+    .sec-sub { font-size:0.97rem; color:var(--muted); font-weight:500; max-width:560px; line-height:1.75; }
+    .tc { text-align:center; }
+    .tc .sec-sub { margin:0 auto; }
+
+    /* ── PLANNER CARDS ── */
+    .cards3 { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:48px; }
+    .pcard {
+      background:var(--white); border-radius:20px; border:2px solid var(--border);
+      box-shadow:var(--shadow); overflow:hidden; transition:all .25s;
+    }
+    .pcard:hover { transform:translateY(-7px); box-shadow:var(--shadow2); border-color:var(--blue-lt); }
+    .pcard-top { height:112px; display:flex; align-items:center; justify-content:center; font-size:2.6rem; }
+    .pt-blue, .pt-gold, .pt-indigo { background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%); }
+    .pcard-body { padding:22px 24px; }
+    .pcard-body h3 { font-size:1rem; font-weight:900; color:var(--text); margin-bottom:8px; }
+    .pcard-body p  { font-size:0.85rem; color:var(--muted); font-weight:600; line-height:1.65; margin-bottom:14px; }
+    .ptags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+    .ptag { font-size:0.72rem; font-weight:800; padding:3px 11px; border-radius:20px; background:var(--blue-pale); color:var(--blue); border:1.5px solid var(--blue-mid); }
+    .plink { display:inline-flex; align-items:center; gap:5px; color:var(--navy); font-weight:800; font-size:0.88rem; transition:all .2s; }
+    .plink:hover { color:var(--blue); gap:9px; }
+
+    /* ── STEPS ── */
+    .steps4 { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:48px; }
+    .step-box {
+      background:var(--white); border-radius:16px; padding:28px 22px;
+      text-align:center; border:2px solid var(--border); box-shadow:var(--shadow);
+      transition:border-color .2s, transform .2s;
+    }
+    .step-box:hover { border-color:var(--navy); transform:translateY(-3px); }
+    .step-num { width:52px; height:52px; border-radius:50%; background:var(--navy); color:var(--white); font-size:1.2rem; font-weight:900; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; box-shadow:0 4px 12px rgba(15,45,90,0.28); }
+    .step-box h4 { font-size:0.93rem; font-weight:900; margin-bottom:6px; color:var(--text); }
+    .step-box p  { font-size:0.82rem; color:var(--muted); font-weight:600; line-height:1.55; }
+
+    /* ── TESTIMONIALS ── */
+    .section-testi { background:var(--blue-pale); padding:80px 72px; }
+    .section-testi .tc { max-width:1200px; margin:0 auto; }
+    .reviews3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:44px; max-width:1200px; margin-left:auto; margin-right:auto; }
+    .rcard {
+      background:var(--white); border-radius:14px; padding:26px;
+      box-shadow:var(--shadow); position:relative;
+    }
+    .rquote { font-size:2rem; color:var(--blue-mid); font-weight:900; line-height:1; margin-bottom:6px; }
+    .rtext { font-size:0.88rem; color:var(--text2); font-weight:500; line-height:1.7; margin-bottom:18px; font-style:italic; }
+    .rauthor { display:flex; align-items:center; gap:10px; }
+    .ravatar { width:34px; height:34px; border-radius:50%; background:var(--blue-mid); color:var(--navy); font-size:0.85rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .rname { font-weight:800; font-size:0.85rem; color:var(--navy); }
+    .rrole { font-size:0.78rem; color:var(--muted); font-weight:500; }
+
+    /* ── CTA ── */
+    .cta-section {
+      background:linear-gradient(150deg,var(--navy3) 0%,var(--navy) 55%,#1A4F9E 100%);
+      padding:80px 72px; text-align:center;
+    }
+    .cta-box h2 { font-size:2rem; font-weight:800; color:var(--white); margin-bottom:14px; }
+    .cta-box p  { color:rgba(255,255,255,0.82); font-size:1rem; font-weight:500; margin-bottom:32px; max-width:560px; margin-left:auto; margin-right:auto; }
+    .cta-btns  { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+    .btn-white { background:var(--white); color:var(--navy); padding:13px 30px; border-radius:50px; font-weight:700; font-size:0.97rem; transition:all .2s; }
+    .btn-white:hover { background:var(--blue-pale); }
+    .btn-ol-w { background:var(--blue); color:var(--white); padding:13px 30px; border-radius:50px; font-weight:700; font-size:0.97rem; transition:all .2s; }
+    .btn-ol-w:hover { background:var(--blue-lt); }
+
+    /* ── FOOTER ── */
+    footer { background:var(--navy3); padding:56px 72px 26px; color:rgba(255,255,255,0.55); }
+    .fgrid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr; gap:36px; margin-bottom:36px; }
+    .flogo { font-size:1.25rem; font-weight:800; color:var(--white); margin-bottom:10px; }
+    .fdesc { font-size:0.85rem; font-weight:500; line-height:1.7; margin-bottom:16px; }
+    .fsocial { display:flex; gap:10px; }
+    .fsocial a { width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:0.85rem; color:var(--white); transition:background .2s; }
+    .fsocial a:hover { background:var(--blue); }
+    .fcol h4 { color:var(--white); font-weight:700; font-size:0.88rem; margin-bottom:14px; }
+    .fcol a  { display:block; font-size:0.85rem; font-weight:500; margin-bottom:9px; transition:color .2s; }
+    .fcol a:hover { color:var(--blue-lt); }
+    .fbot { border-top:1px solid rgba(255,255,255,0.1); padding-top:20px; text-align:center; font-size:0.82rem; font-weight:500; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      nav,.section,.section-alt-inner,.section-testi,.cta-section,footer{padding-left:28px;padding-right:28px;}
+      .hero{padding:130px 28px 80px;}
+      .cards3,.steps4,.reviews3{grid-template-columns:1fr 1fr;}
+      .fgrid{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:640px){
+      .cards3,.steps4,.reviews3{grid-template-columns:1fr;}
+      .nav-menu a:not(.nav-btn){display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">PocketSmart</div>
+  <div class="nav-menu">
+    <a href="#features">Features</a>
+    <a href="#reviews">Testimonials</a>
+    <a href="/login">Sign In</a>
+    <a href="/register" class="nav-btn">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div style="padding-top:68px">
+<div class="hero">
+  <div class="hero-inner">
+    <h1>PocketSmart<br/>AI-Powered Budget Planning for Everyday Needs</h1>
+    <p class="hero-sub">Make smarter financial decisions with personalized budget recommendations for home interiors, parties, and jewelry purchases. Our AI helps you get the most value for your money.</p>
+    <div class="hero-actions">
+      <a href="/register" class="btn-gold">Get Started</a>
+      <a href="#features" class="btn-ghost-w">Learn More</a>
+    </div>
+  </div>
+</div>
+
+<!-- PLANNERS -->
+<div class="section" id="features">
+  <div class="tc">
+    <h2 class="sec-title">Our Smart Budget Planners</h2>
+    <p class="sec-sub">Discover how PocketSmart helps you make better financial decisions across different areas of your life</p>
+  </div>
+  <div class="cards3">
+    <div class="pcard">
+      <div class="pcard-top pt-blue">🏠</div>
+      <div class="pcard-body">
+        <h3>Home Interior Budget Planner</h3>
+        <p>Tell us your rooms, budget and style. Get curated furniture, lighting and decor picks within your price range from top platforms.</p>
+        <div class="ptags"><span class="ptag">Amazon</span><span class="ptag">Flipkart</span><span class="ptag">IKEA</span></div>
+        <a href="/register" class="plink">Start Planning →</a>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-top pt-gold">🎉</div>
+      <div class="pcard-body">
+        <h3>Party Budget Planner</h3>
+        <p>Input budget, guest count and event type. AI splits costs perfectly across food, decoration, entertainment and venue.</p>
+        <div class="ptags"><span class="ptag">Swiggy</span><span class="ptag">Zomato</span><span class="ptag">OYO</span><span class="ptag">Amazon</span></div>
+        <a href="/register" class="plink">Plan My Event →</a>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-top pt-indigo">💍</div>
+      <div class="pcard-body">
+        <h3>Jewelry Budget Planner</h3>
+        <p>Enter your budget and occasion. Upload an outfit photo for AI color-matched jewelry suggestions that complement your look.</p>
+        <div class="ptags"><span class="ptag">Amazon</span><span class="ptag">Flipkart</span><span class="ptag">All Occasions</span></div>
+        <a href="/register" class="plink">Find Jewelry →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section-alt" id="how-it-works">
+  <div class="section-alt-inner">
+    <div class="tc">
+      <h2 class="sec-title">How PocketSmart AI Works</h2>
+      <p class="sec-sub">Get personalized AI recommendations in just 4 easy steps</p>
+    </div>
+    <div class="steps4">
+      <div class="step-box"><div class="step-num">1</div><h4>Create Free Account</h4><p>Sign up in seconds — no credit card or payment needed</p></div>
+      <div class="step-box"><div class="step-num">2</div><h4>Choose Your Planner</h4><p>Pick from Home, Party or Jewelry budget planner</p></div>
+      <div class="step-box"><div class="step-num">3</div><h4>Set Your Budget</h4><p>Enter your budget, preferences and specific requirements</p></div>
+      <div class="step-box"><div class="step-num">4</div><h4>Get AI Picks</h4><p>Receive curated product picks with direct shopping links</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<div class="section-testi" id="reviews">
+  <div class="tc">
+    <h2 class="sec-title">What Our Users Say</h2>
+    <p class="sec-sub">Real experiences from people who have transformed their financial planning with PocketSmart</p>
+  </div>
+  <div class="reviews3">
+    <div class="rcard">
+      <div class="rquote">"</div>
+      <p class="rtext">"PocketSmart helped me furnish my new apartment without breaking the bank. The recommendations were spot on and I saved nearly 30% of my original budget!"</p>
+      <div class="rauthor"><div class="ravatar">P</div><div><div class="rname">Priya S.</div><div class="rrole">Home Owner</div></div></div>
+    </div>
+    <div class="rcard">
+      <div class="rquote">"</div>
+      <p class="rtext">"Planning my daughter's birthday party was so much easier with PocketSmart's budget breakdown. The AI suggestions for affordable decorations and catering options were fantastic."</p>
+      <div class="rauthor"><div class="ravatar">R</div><div><div class="rname">Rahul M.</div><div class="rrole">Parent</div></div></div>
+    </div>
+    <div class="rcard">
+      <div class="rquote">"</div>
+      <p class="rtext">"The jewelry recommendations perfectly matched my outfit for the wedding. Saved me hours of searching and I received so many compliments on my accessories!"</p>
+      <div class="rauthor"><div class="ravatar">A</div><div><div class="rname">Ananya K.</div><div class="rrole">Fashion Enthusiast</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-box">
+    <h2>Ready to Optimize Your Budget?</h2>
+    <p>Join PocketSmart today and start making smarter financial decisions across all areas of your life.</p>
+    <div class="cta-btns">
+      <a href="/login" class="btn-white">Sign In</a>
+      <a href="/register" class="btn-ol-w">Create Account</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fgrid">
+    <div>
+      <div class="flogo">PocketSmart</div>
+      <p class="fdesc">AI-powered budget planning tools to help you make smarter financial decisions every day.</p>
+      <div class="fsocial">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Twitter">𝕏</a>
+        <a href="#" aria-label="Instagram">◎</a>
+        <a href="#" aria-label="LinkedIn">in</a>
+      </div>
+    </div>
+    <div class="fcol"><h4>Company</h4><a href="#">About Us</a><a href="#">Our Team</a><a href="#">Careers</a><a href="#">Contact Us</a></div>
+    <div class="fcol"><h4>Product</h4><a href="/home-planner">Home Planner</a><a href="/party-planner">Party Planner</a><a href="/jewelry-planner">Jewelry Planner</a><a href="#">Pricing</a></div>
+    <div class="fcol"><h4>Resources</h4><a href="#">Blog</a><a href="#">Guides</a><a href="#">FAQ</a><a href="#">Support</a></div>
+    <div class="fcol"><h4>Legal</h4><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookies Policy</a></div>
+  </div>
+  <div class="fbot">© 2025 PocketSmart. All rights reserved.</div>
+</footer>
+</div>
+</body>
+</html>

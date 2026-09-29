@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PocketSmart AI – Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--navy:#0F2D5A;--navy2:#0A2244;--navy3:#071A35;--blue:#1E6FD9;--blue-lt:#4189E8;--blue-pale:#EEF4FE;--blue-mid:#CCDCFB;--white:#FFFFFF;--off:#F7F9FC;--text:#0A1628;--text2:#1E2E46;--muted:#5C718A;--border:#DDE5F0;--shadow:0 10px 40px rgba(10,34,68,0.12);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Nunito',sans-serif;color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--blue-pale) 0%,var(--off) 100%);padding:40px 20px;}
+    a{text-decoration:none;color:inherit;}
+
+    .page{width:100%;max-width:420px;text-align:center;}
+    .brand{font-size:1.9rem;font-weight:800;color:var(--navy);margin-bottom:6px;}
+    .brand-tag{font-size:0.95rem;font-weight:600;color:var(--muted);margin-bottom:28px;}
+
+    .card{background:var(--white);border-radius:18px;box-shadow:var(--shadow);padding:40px 36px;text-align:left;}
+    .page-title{font-size:1.5rem;font-weight:800;color:var(--navy);margin-bottom:24px;text-align:center;}
+    .form-group{margin-bottom:18px;}
+    .form-group label{display:block;font-size:0.88rem;font-weight:700;color:var(--text2);margin-bottom:7px;}
+    .inp-wrap{position:relative;}
+    .inp-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;color:var(--navy);}
+    input{width:100%;padding:13px 14px 13px 42px;border:1.5px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:600;color:var(--text);background:var(--white);transition:border-color .2s,box-shadow .2s;}
+    input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(30,111,217,0.1);}
+    input::placeholder{color:#9EB0C8;font-weight:600;}
+    .forgot-row{text-align:right;margin-bottom:20px;}
+    .forgot-row a{color:var(--blue);font-size:0.87rem;font-weight:700;}
+    .forgot-row a:hover{color:var(--navy);}
+    .btn-submit{width:100%;padding:14px;background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%);color:var(--white);border:none;border-radius:50px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;}
+    .btn-submit:hover{opacity:0.92;transform:translateY(-1px);}
+    .btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+    .err-box{background:#FEF2F2;border:1.5px solid #FECACA;color:#B91C1C;border-radius:10px;padding:10px 14px;font-size:0.88rem;font-weight:700;margin-bottom:16px;display:none;}
+    .switch{text-align:center;margin-top:22px;color:var(--muted);font-size:0.9rem;font-weight:600;}
+    .switch a{color:var(--blue);font-weight:800;}
+    .switch a:hover{color:var(--navy);}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="brand">PocketSmart</div>
+    <p class="brand-tag">AI-Powered Budget Planning</p>
+
+    <div class="card">
+      <h1 class="page-title">Welcome Back</h1>
+      <div class="err-box" id="errBox"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Username</label>
+          <div class="inp-wrap"><span class="inp-icon">&#128100;</span><input type="text" id="username" placeholder="Enter your username" required/></div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="inp-wrap"><span class="inp-icon">&#128274;</span><input type="password" id="password" placeholder="Enter your password" required/></div>
+        </div>
+        <div class="forgot-row"><a href="#">Forgot Password?</a></div>
+        <button type="submit" class="btn-submit" id="submitBtn">Sign In &rarr;</button>
+      </form>
+    </div>
+    <p class="switch">Don't have an account? <a href="/register">Create Account</a></p>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const eb = document.getElementById('errBox'), btn = document.getElementById('submitBtn');
+      btn.textContent = 'Signing in...'; btn.disabled = true; eb.style.display = 'none';
+      try {
+        const fd = new FormData();
+        fd.append('username', document.getElementById('username').value);
+        fd.append('password', document.getElementById('password').value);
+        const res = await fetch('/token', {method:'POST', body:fd});
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('token', data.access_token);
+          localStorage.setItem('username', document.getElementById('username').value);
+          window.location.href = '/dashboard';
+        } else {
+          eb.textContent = data.detail || 'Invalid username or password';
+          eb.style.display = 'block';
+          btn.textContent = 'Sign In →'; btn.disabled = false;
+        }
+      } catch { eb.textContent = 'Connection error. Please try again.'; eb.style.display = 'block'; btn.textContent = 'Sign In →'; btn.disabled = false; }
+    });
+  </script>
+</body>
+</html>

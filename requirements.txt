@@ -1,0 +1,12 @@
+fastapi==0.115.6
+uvicorn==0.34.0
+starlette==0.41.3
+google-genai
+python-jose[cryptography]
+passlib==1.7.4
+bcrypt==4.0.1
+python-dotenv
+Pillow
+jinja2
+python-multipart
+pydantic

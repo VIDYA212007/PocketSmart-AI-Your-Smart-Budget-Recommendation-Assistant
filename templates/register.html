@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PocketSmart AI – Create Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--navy:#0F2D5A;--navy2:#0A2244;--blue:#1E6FD9;--blue-pale:#EEF4FE;--white:#FFFFFF;--off:#F7F9FC;--text:#0A1628;--text2:#1E2E46;--muted:#5C718A;--border:#DDE5F0;--shadow:0 10px 40px rgba(10,34,68,0.12);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Nunito',sans-serif;color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--blue-pale) 0%,var(--off) 100%);padding:40px 20px;}
+    a{text-decoration:none;color:inherit;}
+
+    .page{width:100%;max-width:420px;text-align:center;}
+    .brand{font-size:1.9rem;font-weight:800;color:var(--navy);margin-bottom:6px;}
+    .brand-tag{font-size:0.95rem;font-weight:600;color:var(--muted);margin-bottom:28px;}
+
+    .card{background:var(--white);border-radius:18px;box-shadow:var(--shadow);padding:40px 36px;text-align:left;}
+    .page-title{font-size:1.5rem;font-weight:800;color:var(--navy);margin-bottom:24px;text-align:center;}
+    .form-group{margin-bottom:18px;}
+    .form-group label{display:block;font-size:0.88rem;font-weight:700;color:var(--text2);margin-bottom:7px;}
+    .inp-wrap{position:relative;}
+    .inp-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;color:var(--navy);}
+    input{width:100%;padding:13px 14px 13px 42px;border:1.5px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:600;color:var(--text);background:var(--white);transition:border-color .2s,box-shadow .2s;}
+    input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(30,111,217,0.1);}
+    input::placeholder{color:#9EB0C8;font-weight:600;}
+    .strength-bar{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden;}
+    .strength-fill{height:100%;width:0%;background:var(--border);transition:width .2s,background .2s;}
+    .btn-submit{width:100%;padding:14px;background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%);color:var(--white);border:none;border-radius:50px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;margin-top:6px;}
+    .btn-submit:hover{opacity:0.92;transform:translateY(-1px);}
+    .btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+    .msg{border-radius:10px;padding:10px 14px;font-size:0.88rem;font-weight:700;margin-bottom:16px;display:none;}
+    .msg-err{background:#FEF2F2;border:1.5px solid #FECACA;color:#B91C1C;}
+    .msg-ok{background:#F0FDF4;border:1.5px solid #BBF7D0;color:#15803D;}
+    .switch{text-align:center;margin-top:22px;color:var(--muted);font-size:0.9rem;font-weight:600;}
+    .switch a{color:var(--blue);font-weight:800;}
+    .switch a:hover{color:var(--navy);}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="brand">PocketSmart</div>
+    <p class="brand-tag">AI-Powered Budget Planning</p>
+
+    <div class="card">
+      <h1 class="page-title">Create Your Account</h1>
+      <div class="msg msg-err" id="errMsg"></div>
+      <div class="msg msg-ok"  id="okMsg"></div>
+      <form id="regForm">
+        <div class="form-group"><label>Username</label><div class="inp-wrap"><span class="inp-icon">&#128100;</span><input type="text" id="username" placeholder="Choose a username" required/></div></div>
+        <div class="form-group"><label>Email</label><div class="inp-wrap"><span class="inp-icon">&#9993;</span><input type="email" id="email" placeholder="Enter your email"/></div></div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="inp-wrap"><span class="inp-icon">&#128274;</span><input type="password" id="password" placeholder="Create a strong password" required/></div>
+          <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+        </div>
+        <div class="form-group"><label>Confirm Password</label><div class="inp-wrap"><span class="inp-icon">&#10003;</span><input type="password" id="confirm" placeholder="Confirm your password" required/></div></div>
+        <input type="hidden" id="fullname" value=""/>
+        <button type="submit" class="btn-submit" id="submitBtn">Create Account</button>
+      </form>
+    </div>
+    <p class="switch">Already have an account? <a href="/login">Sign In</a></p>
+  </div>
+
+  <script>
+    document.getElementById('password').addEventListener('input', (e) => {
+      const v = e.target.value; let score = 0;
+      if (v.length >= 6) score++;
+      if (v.length >= 10) score++;
+      if (/[A-Z]/.test(v) && /[0-9]/.test(v)) score++;
+      const fill = document.getElementById('strengthFill');
+      const pct = [0, 33, 66, 100][score];
+      const colors = ['#DDE5F0', '#EF4444', '#F5A623', '#22C55E'];
+      fill.style.width = pct + '%';
+      fill.style.background = colors[score];
+    });
+
+    document.getElementById('regForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = document.getElementById('errMsg'), ok = document.getElementById('okMsg'), btn = document.getElementById('submitBtn');
+      err.style.display = 'none'; ok.style.display = 'none';
+      const pw = document.getElementById('password').value, cf = document.getElementById('confirm').value;
+      if (pw !== cf) { err.textContent = 'Passwords do not match!'; err.style.display = 'block'; return; }
+      btn.textContent = 'Creating...'; btn.disabled = true;
+      try {
+        const res = await fetch('/register', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:document.getElementById('username').value, full_name:document.getElementById('fullname').value, email:document.getElementById('email').value, password:pw})});
+        const data = await res.json();
+        if (res.ok) { ok.textContent = 'Account created! Redirecting to login...'; ok.style.display = 'block'; setTimeout(() => window.location.href = '/login', 1500); }
+        else { err.textContent = data.detail || 'Registration failed.'; err.style.display = 'block'; btn.textContent = 'Create Account'; btn.disabled = false; }
+      } catch { err.textContent = 'Connection error.'; err.style.display = 'block'; btn.textContent = 'Create Account'; btn.disabled = false; }
+    });
+  </script>
+</body>
+</html>
