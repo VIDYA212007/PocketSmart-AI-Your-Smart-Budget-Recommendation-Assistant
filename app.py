@@ -13,14 +13,33 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from PIL import Image
-from google import genai
 from dotenv import load_dotenv
+from google import genai
 
 # Load .env
 load_dotenv()
 
 if not os.getenv("GEMINI_API_KEY"):
     raise ValueError("No Gemini API key found. Please set GEMINI_API_KEY in your .env file")
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+PRIMARY_MODEL = os.getenv("GEMINI_MODEL") or "gemini-3.5-flash-lite"
+FALLBACK_MODEL = os.getenv("GEMINI_FALLBACK_MODEL") or "gemini-3.8-flash"
+
+
+def generate_content(contents):
+    models = [PRIMARY_MODEL]
+    if FALLBACK_MODEL != PRIMARY_MODEL:
+        models.append(FALLBACK_MODEL)
+
+    for model_index, model in enumerate(models):
+        try:
+            return client.models.generate_content(model=model, contents=contents)
+        except Exception as error:
+            is_unavailable = getattr(error, "code", None) == 503 or "503" in str(error)
+            if is_unavailable and model_index < len(models) - 1:
+                continue
+            raise
 
 # FastAPI app initialization
 app = FastAPI(title="PocketSmart: AI Budget Planner")
@@ -116,8 +135,6 @@ async def recommendations_details(request: Request, current_user: UserInDB = Dep
     budget = body.get("budget", 0)
     preferences = body.get("preferences", {})
 
-    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-
     prompt = f"""
     You are PocketSmart AI, a budget recommendation expert.
     Category: {category}
@@ -134,10 +151,7 @@ async def recommendations_details(request: Request, current_user: UserInDB = Dep
     Be specific and practical. Stay within budget.
     """
 
-    response = client.models.generate_content(
-        model="gemini-3.8-flash",
-        contents=prompt
-    )
+    response = generate_content(contents=prompt)
 
     # Save to this user's history
     history_entry = {

@@ -7,13 +7,30 @@ from dotenv import load_dotenv
 from state import recommendation_history
 from auth import get_current_active_user
 from models import UserInDB
-import os, time, uuid
+import os, uuid
 from datetime import datetime
 
 load_dotenv()
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+PRIMARY_MODEL = os.getenv("GEMINI_MODEL") or "gemini-3.5-flash-lite"
+FALLBACK_MODEL = os.getenv("GEMINI_FALLBACK_MODEL") or "gemini-3.8-flash"
+
+
+def generate_content(contents):
+  models = [PRIMARY_MODEL]
+  if FALLBACK_MODEL != PRIMARY_MODEL:
+    models.append(FALLBACK_MODEL)
+
+  for model_index, model in enumerate(models):
+    try:
+      return client.models.generate_content(model=model, contents=contents)
+    except Exception as error:
+      is_unavailable = getattr(error, "code", None) == 503 or "503" in str(error)
+      if is_unavailable and model_index < len(models) - 1:
+        continue
+      raise
 
 class HomeRequest(BaseModel):
     budget: float
@@ -82,18 +99,8 @@ Rules:
 - Total of all allocations must equal exactly Rs.{budget}
 - Return ONLY the JSON, nothing else
 """
-    for attempt in range(3):
-        try:
-            response = client.models.generate_content(
-                model="gemini-3.8-flash",
-                contents=prompt
-            )
-            return response.text
-        except Exception as e:
-            if "503" in str(e) and attempt < 2:
-                time.sleep(3)
-                continue
-            raise e
+    response = generate_content(contents=prompt)
+    return response.text
 
 @router.get("/home-planner")
 async def home_planner_page(request: Request, current_user: UserInDB = Depends(get_current_active_user)):
